@@ -1,13 +1,13 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
-  "name": "Mint Starter Kit",
+  "name": "Paycrypt Documentation",
   "colors": {
-    "primary": "#16A34A",
-    "light": "#07C983",
-    "dark": "#15803D"
+    "primary": "#000000",
+    "light": "#FFFFFF",
+    "dark": "#333333"
   },
-  "favicon": "/favicon.svg",
+  "favicon": "https://us-east-1.tixte.net/uploads/tanmay111-files.tixte.co/Untitled_design_(1).png",
   "navigation": {
     "tabs": [
       {
@@ -15,22 +15,11 @@
         "groups": [
           {
             "group": "Get Started",
-            "pages": [
-              "index",
-              "quickstart",
-              "development"
-            ]
+            "pages": ["index"]
           },
           {
-            "group": "Essentials",
-            "pages": [
-              "essentials/markdown",
-              "essentials/code",
-              "essentials/images",
-              "essentials/settings",
-              "essentials/navigation",
-              "essentials/reusable-snippets"
-            ]
+            "group": "Integration Guide",
+            "pages": ["integration/website"]
           }
         ]
       },
@@ -38,13 +27,7 @@
         "tab": "API Reference",
         "groups": [
           {
-            "group": "API Documentation",
-            "pages": [
-              "api-reference/introduction"
-            ]
-          },
-          {
-            "group": "Endpoint Examples",
+            "group": "Endpoints",
             "pages": [
               "api-reference/endpoint/get",
               "api-reference/endpoint/create",
@@ -59,44 +42,44 @@
       "anchors": [
         {
           "anchor": "Documentation",
-          "href": "https://mintlify.com/docs",
+          "href": "https://docs.paycrypt.tech",
           "icon": "book-open-cover"
         },
         {
           "anchor": "Community",
-          "href": "https://mintlify.com/community",
-          "icon": "slack"
+          "href": "https://x.com/paycrypt_tech",
+          "icon": "twitter"
         },
         {
-          "anchor": "Blog",
+          "anchor": "Website",
           "href": "https://mintlify.com/blog",
-          "icon": "newspaper"
+          "icon": "globe"
         }
       ]
     }
   },
   "logo": {
-    "light": "/logo/light.svg",
-    "dark": "/logo/dark.svg"
+    "light": "https://us-east-1.tixte.net/uploads/tanmay111-files.tixte.co/Untitled_design_(1).png",
+    "dark": "https://us-east-1.tixte.net/uploads/tanmay111-files.tixte.co/Untitled_design_(1).png"
   },
   "navbar": {
     "links": [
       {
         "label": "Support",
-        "href": "mailto:hi@mintlify.com"
+        "href": "mailto:info@paycrypt.tech"
       }
     ],
     "primary": {
       "type": "button",
       "label": "Dashboard",
-      "href": "https://dashboard.mintlify.com"
+      "href": "https://app.paycrypt.tech"
     }
   },
   "footer": {
     "socials": {
-      "x": "https://x.com/mintlify",
-      "github": "https://github.com/mintlify",
-      "linkedin": "https://linkedin.com/company/mintlify"
+      "x": "https://x.com/paycrypt_tech",
+      "github": "https://github.com/paycrypt-tech",
+      "discord": "https://discord.com/invite/m2r6dKXJKq"
     }
   }
 }

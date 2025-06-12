@@ -1,0 +1,144 @@
+---
+title: Website
+description: Learn how to integrate Paycrypt payments into your website
+---
+
+## Step 1: Create a Payment Link 
+
+Payment links are the easiest way to start accepting payments. They can be created through the Paycrypt Dashboard or programmatically using our API.
+
+<img src="https://us-east-1.tixte.net/uploads/tanmay111-files.tixte.co/Screenshot_2025-06-13_at_3.34.20%E2%80%AFAM_1_(1).png" alt="Create Payment Link Dashboard" />
+
+1.  **Log in to your [Paycrypt Dashboard](https://paycrypt.tech)**
+2.  **Navigate to "Payment" > "Create Payment Link"** on the left sidebar.
+3.  **Fill in the payment details as shown in the image:**
+    *   **Title:** Enter a descriptive name for your payment link, e.g., "Demo store".
+    *   **Amount Settings:** Select the currency (e.g., USD) and enter the amount (e.g., 100).
+    *   **Link Settings:** Configure how long the payment link remains active (e.g., PERMANENT).
+    *   **Description (Optional):** Add a description visible to your customers, e.g., "This is a demo store".
+    *   **Redirect URL (Optional):** Specify a URL where customers will be redirected after payment, e.g., `https://example.com`.
+    *   **Collect customer info:** Choose what information to collect from your customers. In the example, "Collect email" is checked.
+4.  **Click "Create Payment Link"**.
+5.  **Copy the generated payment link**. This link can be shared with customers or used in your website's payment button.
+
+
+## Step 2: Set Up Webhooks
+
+Webhooks allow you to receive real-time notifications about payment events. Here's how to set them up:
+
+<img src="https://us-east-1.tixte.net/uploads/tanmay111-files.tixte.co/Screenshot_2025-06-13_at_3.18.16%E2%80%AFAM_1.png" alt="Webhook Setup Dashboard" />
+
+1.  **Go to your [Paycrypt Dashboard](https://paycrypt.tech)**
+2.  **Navigate to "Settings" > "Webhooks"** on the left sidebar
+3.  **Click "Add Endpoint"** button
+4.  **Enter your webhook URL** in the provided field
+5.  **Create webhook secret** (this will be used to verify the webhook signature)
+    *   Make sure to store this secret securely, as it will be used in your server code to verify incoming webhook requests
+6.  **Click "Add Endpoint"** to complete the setup
+
+
+## Step 3: Verify Webhook Signatures
+To ensure the security of your webhook events, you need to verify the signature of incoming webhook requests. Here's how to do it:
+
+```typescript
+import { NextResponse } from "next/server";
+import prisma from "../../lib/db";
+
+export async function POST(request: Request) {
+  try {
+    // Verify webhook signature
+    const signature = request.headers.get("X-Webhook-Signature");
+    const webhookSecret = process.env.WEBHOOK_SECRET;
+
+    if (!signature || !webhookSecret || signature !== webhookSecret) {
+      return NextResponse.json(
+        { error: "Invalid webhook signature" },
+        { status: 401 }
+      );
+    }
+
+    const body = await request.json();
+    const { email } = body;
+
+    console.log(body);
+    if (!email) {
+      return NextResponse.json({ error: "Email is required" }, { status: 400 });
+    }
+
+    // Find the user by email and update their status to Pro
+    const user = await prisma.user.update({
+      where: { email },
+      data: { isPro: true },
+    });
+
+    if (!user) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
+
+    return NextResponse.json({
+      success: true,
+      message: "User upgraded to Pro successfully",
+    });
+  } catch (error) {
+    console.error("Error upgrading user:", error);
+    return NextResponse.json(
+      { error: "Failed to upgrade user" },
+      { status: 500 }
+    );
+  }
+}
+```
+
+This example shows how to:
+1. Verify the webhook signature using the `X-Webhook-Signature` header
+2. Process the webhook payload
+3. Update user status in your database
+4. Return appropriate responses
+
+## Step 4: Add Payment Button to Your Website
+
+You can add a payment button to your website in two ways:
+
+### Option 1: Using the Checkout Link
+
+1.  **Copy your payment link** from [Step 1: Create a Payment Link](##step-1-create-a-payment-link)
+2.  **Add the link to your website**:
+
+```html
+<a href="YOUR_CHECKOUT_LINK" class="paycrypt-button">
+  Pay Now
+</a>
+```
+### Option 2: Using the Paycrypt Button Component (coming soon)
+
+1.  **Install the Paycrypt SDK** using pnpm:
+
+```bash
+pnpm add @paycrypt/sdk
+```
+
+2.  **Add the button to your React component**:
+
+```javascript
+import { PaycryptButton } from '@paycrypt/sdk';
+
+function CheckoutPage() {
+  return (
+    <PaycryptButton
+      amount={100}
+      currency="USD"
+      onSuccess={(payment) => {
+        console.log('Payment successful:', payment);
+      }}
+      onError={(error) => {
+        console.error('Payment failed:', error);
+      }}
+    />
+  );
+}
+```
+## Reference Implementation
+
+Check out [M3Labs](https://m3labs.in/) for a live example of Paycrypt integration in action. They use Paycrypt for processing payments for their voice assistant service.
+
+
