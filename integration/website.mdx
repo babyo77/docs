@@ -44,6 +44,31 @@ To ensure the security of your webhook events, you need to verify the signature 
 import { NextResponse } from "next/server";
 import prisma from "../../lib/db";
 
+interface PaymentWebhookPayload {
+  id: string;
+  merchant_id: string;
+  currency: string;
+  amount: number;
+  amount_usd: number;
+  tx_hash: string;
+  address: string;
+  sender_address: string;
+  status: string;
+  network: string;
+  payment_link_id: string;
+  checkout_session_id: string;
+  is_paid_to_merchant: boolean;
+  confirmed_at: string | null;
+  created_at: string;
+  expires_at: string;
+  webhook_secret: string;
+  Webhook: string;
+  txID: string;
+  hash: string;
+  timestamp: string;
+  email: string;
+}
+
 export async function POST(request: Request) {
   try {
     // Verify webhook signature
@@ -57,18 +82,14 @@ export async function POST(request: Request) {
       );
     }
 
-    const body = await request.json();
-    const { email } = body;
-
-    console.log(body);
-    if (!email) {
-      return NextResponse.json({ error: "Email is required" }, { status: 400 });
-    }
-
+    const payload = await request.json() as PaymentWebhookPayload;
+  
     // Find the user by email and update their status to Pro
     const user = await prisma.user.update({
-      where: { email },
-      data: { isPro: true },
+      where: { email: payload.email },
+      data: { 
+        isPro: true,
+      },
     });
 
     if (!user) {
@@ -78,11 +99,12 @@ export async function POST(request: Request) {
     return NextResponse.json({
       success: true,
       message: "User upgraded to Pro successfully",
+      paymentId: payload.id
     });
   } catch (error) {
-    console.error("Error upgrading user:", error);
+    console.error("Error processing webhook:", error);
     return NextResponse.json(
-      { error: "Failed to upgrade user" },
+      { error: "Failed to process webhook" },
       { status: 500 }
     );
   }
